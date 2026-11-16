@@ -1,0 +1,44 @@
+# Offline validation only: no kubeconfig, ServiceAccount token, or cluster access.
+name: Python CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Unit tests and syntax / Python 3.14
+    runs-on: ubuntu-latest
+
+    steps:
+      # Fetch the checked-in project source without persisting Git credentials
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Install the same Python minor version used by the workstation lab
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+          cache: pip
+
+      # Install only repository-declared requirements
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      # Check project Python syntax and independent transformation logic
+      - name: Compile Python source
+        run: python -m compileall -q k8s_observer.py k8s_pod_observer.py k8s_metrics_observer.py k8s_platform_observer.py k8s_report.py tests
+
+      - name: Run offline unit tests
+        run: python -m pytest -v tests/
