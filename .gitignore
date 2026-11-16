@@ -1,0 +1,20 @@
+# Virtual environments and Python caches
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# Authentication, local configuration, and secrets
+.kube/
+.env
+.env.*
+*.kubeconfig
+*kubeconfig*.yaml
+k8s-observer-ro.yaml
+admin.conf
+*token*.txt
+*secret*.yaml
+
+# Locally generated snapshots / logs
+reports/
+*.log
